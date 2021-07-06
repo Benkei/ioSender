@@ -1359,26 +1359,18 @@ namespace CNC.Core
             {
                 try
                 {
-                    StreamReader file = new StreamReader(string.Format("{0}error_codes_{1}.csv", Resources.Path, Resources.Language));
-
-                    if (file != null)
+                    using (var file = new StreamReader(string.Format("{0}error_codes_{1}.csv", Resources.Path, Resources.Language)))
+                    using (var csv = new CsvHelper.CsvReader(file, CultureInfo.InvariantCulture))
                     {
-                        string line = file.ReadLine();
+                        csv.Read();
+                        csv.ReadHeader();
 
-                        line = file.ReadLine(); // Skip header  
-
-                        while (line != null)
+                        while (csv.Read())
                         {
-                            string[] columns = line.Split(',');
-
-                            if (columns.Length == 3)
-                                messages.Add(columns[0], columns[2]);
-
-                            line = file.ReadLine();
+                            if (csv.HeaderRecord.Length == 3)
+                                messages.Add(csv.GetField<string>(0), csv.GetField<string>(2));
                         }
                     }
-
-                    file.Close();
                 }
                 catch
                 {
@@ -1449,26 +1441,18 @@ namespace CNC.Core
             {
                 try
                 {
-                    StreamReader file = new StreamReader(string.Format("{0}alarm_codes_{1}.csv", Resources.Path, Resources.Language));
-
-                    if (file != null)
+                    using (var file = new StreamReader(string.Format("{0}alarm_codes_{1}.csv", Resources.Path, Resources.Language)))
+                    using (var csv = new CsvHelper.CsvReader(file, CultureInfo.InvariantCulture))
                     {
-                        string line = file.ReadLine();
+                        csv.Read();
+                        csv.ReadHeader();
 
-                        line = file.ReadLine(); // Skip header  
-
-                        while (line != null)
+                        while (csv.Read())
                         {
-                            string[] columns = line.Split(',');
-
-                            if (columns.Length == 3)
-                                messages.Add(columns[0], columns[1] + ": " + columns[2]);
-
-                            line = file.ReadLine();
+                            if (csv.HeaderRecord.Length == 3)
+                                messages.Add(csv.GetField<string>(0), csv.GetField<string>(1) + ": " + csv.GetField<string>(2));
                         }
                     }
-
-                    file.Close();
                 }
                 catch
                 {
@@ -1819,54 +1803,77 @@ namespace CNC.Core
 
                 try
                 {
-                    StreamReader file = new StreamReader(string.Format("{0}{1}", Resources.Path, Resources.ConfigName));
-
-                    if (file != null)
+                    using (var file = new StreamReader(string.Format("{0}{1}", Resources.Path, Resources.ConfigName)))
+                    using (var csv = new CsvHelper.CsvReader(file, CultureInfo.InvariantCulture))
                     {
-                        string line = file.ReadLine();
+                        csv.Read();
+                        csv.ReadHeader();
 
-                        line = file.ReadLine(); // Skip header  
-
-                        while (line != null)
+                        if (csv.HeaderRecord.Length == 4)
                         {
-                            string[] values = line.Split('\t');
-
-                            if (values.Length >= 6)
+                            // GRBL Normal
+                            // "$-Code"," Setting"," Units","Setting Description"
+                            while (csv.Read())
                             {
-                                var setting = Settings.Where(x => x.Id == int.Parse(values[0])).FirstOrDefault();
+                                var id = csv.GetField<int>(0);
+                                var setting = Settings.Where(x => x.Id == id).FirstOrDefault();
 
-                                if (setting != null) {
+                                if (setting != null)
+                                {
+                                    if (setting.Name == string.Empty)
+                                    {
+                                        setting.Name = csv.GetField<string>(1);
+                                        setting.Unit = csv.GetField<string>(2);
 
-                                    if(setting.Name == string.Empty)
+                                        if(Enum.TryParse<GrblSettingDetails.DataTypes>(csv.GetField<string>(2), true, out var dataType))
+										{
+                                            setting.DataType = dataType;
+										}
+										else
+                                        {
+                                            setting.DataType = GrblSettingDetails.DataTypes.TEXT;
+                                        }
+                                    }
+                                    setting.Description = csv.GetField<string>(3).Replace("\\n", "\r\n");
+                                }
+                            }
+                        }
+                        else
+                        {
+                            while (csv.Read())
+                            {
+                                var id = csv.GetField<int>(0);
+                                var setting = Settings.Where(x => x.Id == id).FirstOrDefault();
+
+                                if (setting != null)
+                                {
+                                    if (setting.Name == string.Empty)
                                     {
                                         try
                                         {
-                                            setting.DataType = (GrblSettingDetails.DataTypes)Enum.Parse(typeof(GrblSettingDetails.DataTypes), values[3].ToUpperInvariant());
+                                            setting.DataType = Enum.Parse<GrblSettingDetails.DataTypes>(csv.GetField<string>(3), true);
                                         }
                                         catch
                                         {
                                             setting.DataType = GrblSettingDetails.DataTypes.TEXT;
                                         }
-                                        
-                                        setting.Name = values[1];
-                                        setting.Format = values[4];
+
+                                        setting.Name = csv.GetField<string>(1);
+                                        setting.Format = csv.GetField<string>(4);
 
                                         if (setting.DataType == GrblSettingDetails.DataTypes.INTEGER || setting.DataType == GrblSettingDetails.DataTypes.FLOAT)
-                                            setting.Unit = values[2];
+                                            setting.Unit = csv.GetField<string>(2);
 
-                                        if(values.Length > 6)
-                                            setting.Min = values[6] == string.Empty ? double.NaN : dbl.Parse(values[6]);
+                                        if (csv.HeaderRecord.Length > 6)
+                                            setting.Min = csv.GetField<double>(6);
 
-                                        if (values.Length > 7)
-                                            setting.Max = values[7] == string.Empty ? double.NaN : dbl.Parse(values[7]);
+                                        if (csv.HeaderRecord.Length > 7)
+                                            setting.Max = csv.GetField<double>(7);
                                     }
-                                    setting.Description = values[5].Replace("\\n", "\r\n");
+                                    setting.Description = csv.GetField<string>(5).Replace("\\n", "\r\n");
                                 }
                             }
-                            line = file.ReadLine();
                         }
-                        file.Close();
-                        file.Dispose();
                     }
                 }
                 catch (Exception ex)
