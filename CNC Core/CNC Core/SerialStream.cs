@@ -373,61 +373,66 @@ namespace CNC.Core
         public string Name { get; private set; }
     }
 
-    public class SerialPorts : ViewModelBase
-    {
-        string _selected = string.Empty;
-        string[] _portnames;
-        private ConnectMode _mode = null;
+	public class SerialPorts : ViewModelBase
+	{
+		string _selected = string.Empty;
+		string[] _portnames;
+		private ConnectMode _mode = null;
+		private long _baud;
 
-        public SerialPorts()
-        {
-            Refresh();
+		public SerialPorts()
+		{
+			Refresh();
 
-            if (PortNames.Length > 0)
-                _selected = PortNames[0];
+			if (PortNames.Length > 0)
+				_selected = PortNames[0];
 
-            ConnectModes.Add(new ConnectMode(Comms.ResetMode.None, "No action"));
-            ConnectModes.Add(new ConnectMode(Comms.ResetMode.DTR, "Toggle DTR"));
-            ConnectModes.Add(new ConnectMode(Comms.ResetMode.RTS, "Toggle RTS"));
+			ConnectModes.Add(new ConnectMode(Comms.ResetMode.None, "No action"));
+			ConnectModes.Add(new ConnectMode(Comms.ResetMode.DTR, "Toggle DTR"));
+			ConnectModes.Add(new ConnectMode(Comms.ResetMode.RTS, "Toggle RTS"));
 
-            SelectedMode = ConnectModes[0];
-        }
+			SelectedMode = ConnectModes[0];
 
-        public void Refresh ()
-        {
-            string[] _portnames = SerialPort.GetPortNames();
-            Array.Sort(_portnames);
-            PortNames = _portnames;
-        }
+            _baud = 115200;
+		}
 
-        public string[] PortNames { get { return _portnames; } private set { _portnames = value; OnPropertyChanged(); } }
+		public void Refresh()
+		{
+			string[] _portnames = SerialPort.GetPortNames();
+			Array.Sort(_portnames);
+			PortNames = _portnames;
+		}
 
-        public string SelectedPort
-        {
-            get { return _selected; }
-            set
-            {
-                if (_selected != value)
-                {
-                    _selected = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
+		public string[] PortNames { get { return _portnames; } private set { _portnames = value; OnPropertyChanged(); } }
 
-        public ObservableCollection<ConnectMode> ConnectModes { get; private set; } = new ObservableCollection<ConnectMode>();
+		public string SelectedPort
+		{
+			get { return _selected; }
+			set
+			{
+				if (_selected != value)
+				{
+					_selected = value;
+					OnPropertyChanged();
+				}
+			}
+		}
 
-        public ConnectMode SelectedMode
-        {
-            get { return _mode; }
-            set
-            {
-                if (_mode != value)
-                {
-                    _mode = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-    }
+		public long Baud { get => _baud; set { _baud = value; OnPropertyChanged(); } }
+
+		public ObservableCollection<ConnectMode> ConnectModes { get; private set; } = new ObservableCollection<ConnectMode>();
+
+		public ConnectMode SelectedMode
+		{
+			get { return _mode; }
+			set
+			{
+				if (_mode != value)
+				{
+					_mode = value;
+					OnPropertyChanged();
+				}
+			}
+		}
+	}
 }

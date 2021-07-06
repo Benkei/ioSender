@@ -128,6 +128,7 @@ namespace CNC.Controls
             else
             {
                 port = prop.Com.SelectedPort;
+                port += "!" + prop.Com.Baud;
                 if (prop.Com.SelectedMode.Mode != Comms.ResetMode.None)
                     port += "!" + prop.Com.SelectedMode.Mode.ToString();
             }

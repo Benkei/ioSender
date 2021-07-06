@@ -267,7 +267,7 @@ namespace CNC.Controls
             if (!(Base.PortParams.ToLower().StartsWith("ws://") || char.IsDigit(Base.PortParams[0])) && Base.PortParams.IndexOf(':') == -1)
             {
                 string[] values = Base.PortParams.Split('!');
-                Base.PortParams = values[0] + ":115200,N,8,1" + (values.Length > 1 ? ",," + values[1] : "");
+                Base.PortParams = values[0] + ":" + values[1] + ",N,8,1" + (values.Length > 2 ? ",," + values[2] : "");
             }
         }
 

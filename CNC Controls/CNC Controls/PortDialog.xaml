@@ -3,8 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:CNC.Controls"
-        mc:Ignorable="d"
+        xmlns:local="clr-namespace:CNC.Controls" d:DataContext="{d:DesignInstance Type=local:PortProperties}"
+		mc:Ignorable="d"
         Title="Sender connection" Height="195" Width="270" Icon="App.ico" ResizeMode="NoResize">
     <Window.Resources>
         <Style x:Key="PortErrorStyle" TargetType="local:NumericTextBox">
@@ -39,8 +39,12 @@
                             ItemsSource="{Binding Path=Com.PortNames}"
                             SelectedValue="{Binding Path=Com.SelectedPort, Mode=TwoWay}"
                          />
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
+					</StackPanel>
+					<StackPanel Orientation="Horizontal" VerticalAlignment="Top">
+						<Label Content="Baud:" HorizontalAlignment="Left" HorizontalContentAlignment="Right" Width="80" VerticalAlignment="Center"/>
+						<TextBox HorizontalAlignment="Left" VerticalAlignment="Center" Width="150" Text="{Binding Path=Com.Baud, Mode=TwoWay}" />						
+					</StackPanel>
+					<StackPanel Orientation="Horizontal" VerticalAlignment="Top">
                         <Label Content="On connect:" HorizontalAlignment="Left" HorizontalContentAlignment="Right" Width="80" VerticalAlignment="Center"/>
                         <ComboBox HorizontalAlignment="Left" VerticalAlignment="Center" Width="150"
                             ItemsSource="{Binding Path=Com.ConnectModes}"
