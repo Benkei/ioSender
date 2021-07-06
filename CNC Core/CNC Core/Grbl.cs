@@ -815,7 +815,7 @@ namespace CNC.Core
                 {
                     case "VER":
                         Version = valuepair[1];
-                        if (valuepair.Count() > 2)
+                        if (valuepair.Length > 2)
                             Identity = valuepair[2];
                         if (Version.LastIndexOf('.') > 0)
                         {
@@ -823,6 +823,13 @@ namespace CNC.Core
                             int.TryParse(Version.Substring(Version.LastIndexOf('.') + 1), out build);
                             Build = build;
                         }
+                        break;
+
+                    // [AXS:5:XYZAB]
+                    // Axis Count
+                    // Axis Names
+                    case "AXS":
+                        NumAxes = int.Parse(valuepair[1], CultureInfo.InvariantCulture);
                         break;
 
                     case "OPT":
@@ -834,10 +841,11 @@ namespace CNC.Core
                             PlanBufferSize = int.Parse(s[1], CultureInfo.InvariantCulture);
                         if (s.Length > 2)
                             SerialBufferSize = int.Parse(s[2], CultureInfo.InvariantCulture);
-                        if (s.Length > 3)
-                            NumAxes = int.Parse(s[3], CultureInfo.InvariantCulture);
                         if (s.Length > 4)
+                        {
+                            NumAxes = int.Parse(s[3], CultureInfo.InvariantCulture);
                             NumTools = int.Parse(s[4], CultureInfo.InvariantCulture);
+                        }
                         break;
 
                     case "NEWOPT":
