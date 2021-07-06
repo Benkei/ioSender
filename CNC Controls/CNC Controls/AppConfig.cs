@@ -282,7 +282,8 @@ namespace CNC.Controls
             string[] args = Environment.GetCommandLineArgs();
 
             int p = 0;
-            while (p < args.GetLength(0)) switch (args[p++])
+            while (p < args.Length) 
+                switch (args[p++])
                 {
                     case "-inifile":
                         CNC.Core.Resources.IniName = GetArg(args, p++);
@@ -309,7 +310,7 @@ namespace CNC.Controls
                         break;
 
                     default:
-                        if (!args[p - 1].EndsWith(".exe") && File.Exists(args[p - 1]))
+                        if (!args[p - 1].EndsWith(".exe") && !args[p - 1].EndsWith(".dll") && File.Exists(args[p - 1]))
                             FileName = args[p - 1];
                         break;
                 }
