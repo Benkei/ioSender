@@ -320,7 +320,7 @@ namespace CNC.Core
             Path = @"./";
             Language = "en_US";
             IniName = "App.config";
-            ConfigName = string.Format("setting_codes_{0}.txt", Language);
+            ConfigName = string.Format("setting_codes_{0}.csv", Language);
         }
     }
 
