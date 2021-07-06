@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:CNC.Controls.Probing"
              xmlns:Controls="clr-namespace:CNC.Controls;assembly=CNC.Controls.WPF" x:Class="CNC.Controls.Probing.HeightMapControl"
-             xmlns:helix="clr-namespace:HelixToolkit.Wpf;assembly=HelixToolkit.Wpf"
+             xmlns:helix="clr-namespace:HelixToolkit.Wpf;assembly=HelixToolkit.Wpf" d:DataContext="{d:DesignInstance Type=local:ProbingViewModel}"
              mc:Ignorable="d" Height="370"
              d:DesignHeight="370" d:DesignWidth="600">
     <UserControl.Resources>

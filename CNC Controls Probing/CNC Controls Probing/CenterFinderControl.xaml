@@ -4,8 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:Controls="clr-namespace:CNC.Controls;assembly=CNC.Controls.WPF"
-             xmlns:local="clr-namespace:CNC.Controls.Probing"
-             mc:Ignorable="d" Height="370"
+             xmlns:local="clr-namespace:CNC.Controls.Probing" d:DataContext="{d:DesignInstance Type=local:ProbingViewModel}"
+				 mc:Ignorable="d" Height="370"
              d:DesignHeight="370" d:DesignWidth="600">
     <UserControl.Resources>
         <Controls:MultiLineConverter x:Key="ErrorMessageConverter" />
