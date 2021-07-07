@@ -101,7 +101,7 @@ namespace CNC.Controls
                 model.IsMetric = GrblSettings.GetString(GrblSetting.ReportInches) != "1";
             }
 
-            if (!useFirmwareJog)
+            if (!useFirmwareJog && AppConfig.Settings.Jog != null)
             {
                 AppConfig.Settings.Jog.PropertyChanged += Jog_PropertyChanged;
                 updateConfig();
