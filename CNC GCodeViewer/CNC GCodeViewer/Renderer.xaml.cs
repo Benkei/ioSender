@@ -509,24 +509,28 @@ namespace CNC.Controls.Viewer
 
             if (ShowAxes)
             {
-                Machine.Axes.Children.Add(new ArrowVisual3D() {
-                    Point2 = new Point3D(bbox.SizeX + arrowOffset, 0d, 0d),
+                Machine.Axes.Children.Add(new ArrowVisual3D()
+                {
+                    Point1 = new Point3D(bbox.MinX - arrowOffset, 0d, 0d),
+                    Point2 = new Point3D(bbox.MaxX + arrowOffset, 0d, 0d),
                     Diameter = lineThickness * 5,
                     Fill = AxisBrush
                 });
 
-                Machine.Axes.Children.Add(new BillboardTextVisual3D() {
+                Machine.Axes.Children.Add(new BillboardTextVisual3D()
+                {
                     Text = "X",
                     FontWeight = FontWeights.Bold,
                     Foreground = AxisBrush,
-                    Position = new Point3D(bbox.SizeX + labelOffset, 0d, 0d)
+                    Position = new Point3D(bbox.MaxX + labelOffset, 0d, 0d)
                 });
 
                 if (bbox.SizeY > 0d)
                 {
                     Machine.Axes.Children.Add(new ArrowVisual3D()
                     {
-                        Point2 = new Point3D(0d, bbox.SizeY + arrowOffset, 0d),
+                        Point1 = new Point3D(0d, bbox.MinY - arrowOffset, 0d),
+                        Point2 = new Point3D(0d, bbox.MaxY + arrowOffset, 0d),
                         Diameter = lineThickness * 5d,
                         Fill = AxisBrush
                     });
@@ -536,7 +540,7 @@ namespace CNC.Controls.Viewer
                         Text = "Y",
                         FontWeight = FontWeights.Bold,
                         Foreground = AxisBrush,
-                        Position = new Point3D(0d, bbox.SizeY + labelOffset, 0d)
+                        Position = new Point3D(0d, bbox.MaxY + labelOffset, 0d)
                     });
                 }
 
