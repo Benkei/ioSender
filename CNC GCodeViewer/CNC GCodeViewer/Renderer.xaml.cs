@@ -467,21 +467,38 @@ namespace CNC.Controls.Viewer
             {
                 AxisBrush = new SolidColorBrush(Machine.GridColor);
 
-                double wh, h, wm = bbox.SizeX % TickSize, w = Math.Ceiling(bbox.SizeX - bbox.SizeX % TickSize + TickSize * 2d);
+                double wh, h, 
+                    wm = bbox.SizeX % TickSize, 
+                    w = Math.Ceiling(bbox.SizeX - bbox.SizeX % TickSize + TickSize * 2d);
 
                 if (model.LatheMode == LatheMode.Disabled)
                 {
+                    var minX = Math.Floor(bbox.MinX / TickSize) * TickSize;
+                    var minY = Math.Floor(bbox.MinY / TickSize) * TickSize;
+                    var minZ = Math.Floor(bbox.MinZ / TickSize) * TickSize;
 
-                    wh = bbox.SizeY % TickSize;
-                    h = Math.Ceiling(bbox.SizeY - bbox.SizeY % TickSize + TickSize * 2d);
+                    var maxX = Math.Ceiling(bbox.MaxX / TickSize) * TickSize;
+                    var maxY = Math.Ceiling(bbox.MaxY / TickSize) * TickSize;
+                    var maxZ = Math.Ceiling(bbox.MaxZ / TickSize) * TickSize;
+
+                    var sizeX = maxX - minX;
+                    var sizeY = maxY - minY;
+
+                    var center = new Point3D(
+                        ((int)((sizeX / 2 + minX) / TickSize)) * TickSize,
+                        ((int)((sizeY / 2 + minY) / TickSize)) * TickSize,
+                        0);
+
+                    sizeX += TickSize * 2;
+                    sizeY += TickSize * 2;
 
                     Machine.Grid = new GridLinesVisual3D()
                     {
-                        Center = new Point3D(boffset(bbox.SizeX, bbox.MinX, w, wm) - TickSize, boffset(bbox.SizeY, bbox.MinY, h, wh) - TickSize, 0d),
+                        Center = center,
                         MinorDistance = 2.5d,
                         MajorDistance = TickSize,
-                        Width = h,
-                        Length = w,
+                        Width = sizeY,
+                        Length = sizeX,
                         Thickness = 0.1d,
                         Fill = AxisBrush,
                     };
@@ -525,6 +542,18 @@ namespace CNC.Controls.Viewer
                     Position = new Point3D(bbox.MaxX + labelOffset, 0d, 0d)
                 });
 
+				for (int x = (int)Math.Floor(bbox.MinX / 10), len = (int)Math.Ceiling(bbox.MaxX / 10); x < len; x += 1)
+				{
+                    if (x == 0) continue;
+                    Machine.Axes.Children.Add(new BillboardTextVisual3D()
+                    {
+                        Text = (x * 10).ToString(),
+                        FontWeight = FontWeights.Normal,
+                        Foreground = AxisBrush,
+                        Position = new Point3D(x * 10, 2, 0d)
+                    });
+                }
+
                 if (bbox.SizeY > 0d)
                 {
                     Machine.Axes.Children.Add(new ArrowVisual3D()
@@ -542,6 +571,19 @@ namespace CNC.Controls.Viewer
                         Foreground = AxisBrush,
                         Position = new Point3D(0d, bbox.MaxY + labelOffset, 0d)
                     });
+
+
+                    for (int y = (int)Math.Floor(bbox.MinY / 10), len = (int)Math.Ceiling(bbox.MaxY / 10); y < len; y += 1)
+                    {
+                        if (y == 0) continue;
+                        Machine.Axes.Children.Add(new BillboardTextVisual3D()
+                        {
+                            Text = (y * 10).ToString(),
+                            FontWeight = FontWeights.Normal,
+                            Foreground = AxisBrush,
+                            Position = new Point3D(2, y * 10, 0d)
+                        });
+                    }
                 }
 
                 if (bbox.SizeZ > 0d)
