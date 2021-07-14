@@ -741,6 +741,11 @@ namespace CNC.Core
 
             IsLoaded = res == true;
 
+			if (string.IsNullOrWhiteSpace(Firmware))
+			{
+                Firmware = "grbl";
+            }
+
             if(IsGrblHAL) // For now...
                 Firmware = "grblHAL";
 
